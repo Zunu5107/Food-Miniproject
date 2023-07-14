@@ -1,5 +1,6 @@
 package com.sparta.foodtruck.domain.user.entity;
 
+import com.sparta.foodtruck.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,4 +26,5 @@ public class User {
         this.address = address;
         this.password = password;
     }
+
 }

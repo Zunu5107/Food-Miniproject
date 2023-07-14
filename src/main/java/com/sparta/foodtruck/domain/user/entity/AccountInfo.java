@@ -10,13 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountInfo {
     @Id
-    Long id;
+    private Long id;
 
-    String username;
+    private String username;
 
-    String introduce;
+    private String introduce;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    public AccountInfo(Long id, String username) {
+        this.id = id;
+        this.username = username;
+        this.introduce = null;
+        this.role = UserRoleEnum.USER;
+    }
 }
