@@ -1,11 +1,11 @@
 package com.sparta.foodtruck.global.config;
 
 
-import com.example.springlevel5.jwt.JwtAuthenticationFilter;
-import com.example.springlevel5.jwt.JwtAuthorizationFilter;
-import com.example.springlevel5.jwt.JwtUtil;
-import com.example.springlevel5.security.UserDetailsServiceImpl;
-import com.example.springlevel5.service.RefreshTokenService;
+
+import com.sparta.foodtruck.domain.user.sercurity.UserDetailsServiceImpl;
+import com.sparta.foodtruck.global.jwt.JwtAuthenticationFilter;
+import com.sparta.foodtruck.global.jwt.JwtAuthorizationFilter;
+import com.sparta.foodtruck.global.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -32,14 +32,12 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration, RefreshTokenService refreshTokenService) {
+    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.authenticationConfiguration = authenticationConfiguration;
-        this.refreshTokenService = refreshTokenService;
     }
 
     @Bean
@@ -49,14 +47,14 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenService);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(jwtUtil, userDetailsService, refreshTokenService);
+        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(jwtUtil, userDetailsService);
         return filter;
     }
 
