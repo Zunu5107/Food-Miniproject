@@ -5,6 +5,7 @@ import com.sparta.foodtruck.domain.food.dto.*;
 import com.sparta.foodtruck.domain.food.entity.Food;
 import com.sparta.foodtruck.domain.food.entity.FoodComment;
 import com.sparta.foodtruck.domain.food.entity.FoodValue;
+import com.sparta.foodtruck.domain.food.entity.TempResult;
 import com.sparta.foodtruck.domain.food.repository.FoodCommentRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;
@@ -18,8 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.sparta.foodtruck.domain.food.entity.QFoodComment.foodComment;
 import static com.sparta.foodtruck.domain.food.entity.QFoodValue.foodValue;
@@ -76,9 +79,21 @@ public class FoodService {
     }
 
     @Transactional
-    public CustomStatusResponseDto choiceFood(Long foodId, FoodRequestDto requestDto) {
+    public CustomStatusResponseDto choiceFood(Long foodId, String foodName, FoodRequestDto requestDto, UUID uuid) {
         Food food = findFood(foodId);
 
+        TempResult tempResult = new TempResult();
+        tempResult.generateUUID();
+        tempResult.getSelectFood();
+
+        if(LocalDateTime.now().isAfter(tempResult.getLocalDateTime()))
+            return new CustomStatusResponseDto(false);
+
+        if(food.getFoodName().equals(foodName)) {
+
+            foodRepository.save(food);
+            return new CustomStatusResponseDto(true);
+        }
 //        if (food.getFoodName().equals(requestDto.getFoodName())) {
 //            food.setFoodName(requestDto.getFoodName());
 //            return new CustomStatusResponseDto(true);

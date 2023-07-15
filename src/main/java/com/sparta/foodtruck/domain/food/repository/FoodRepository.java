@@ -15,7 +15,6 @@ import java.util.UUID;
 
 public interface FoodRepository extends JpaRepository<Food, Long> {
 
-
 //    List<Food> findAllBySaltyAndAndSpicyAndAndWorldAndAndHotOrderByFoodCountDesc(boolean salty, int spicy, int world, boolean hot);
 
 //    @Modifying

@@ -30,7 +30,4 @@ public class FoodLike {
         this.food = food;
     }
 
-    public UUID generateUUID() {
-        return UUID.randomUUID();
-    }
 }
