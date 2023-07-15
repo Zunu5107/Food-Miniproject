@@ -5,6 +5,7 @@ import com.sparta.foodtruck.domain.food.dto.*;
 import com.sparta.foodtruck.domain.food.entity.Food;
 import com.sparta.foodtruck.domain.food.entity.FoodComment;
 import com.sparta.foodtruck.domain.food.entity.FoodValue;
+import com.sparta.foodtruck.domain.food.repository.FoodCommentRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodValueRepository;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sparta.foodtruck.domain.food.entity.QFoodComment.foodComment;
 import static com.sparta.foodtruck.domain.food.entity.QFoodValue.foodValue;
 
 
@@ -121,9 +123,11 @@ public class FoodService {
 
     }
 
+    // 이게 어차피 food 조회해 주는 거잖아 넹
+
     public List<CommentResponseDto> getCommentByFood(Long foodId) {
-        Food food = findFood(foodId);
-        return null;
+        List<FoodComment> foodCommentList = queryFactory.selectFrom(foodComment).where(foodComment.food.id.eq(foodId)).orderBy(foodComment.id.desc()).fetch();
+        return foodCommentList.stream().map(CommentResponseDto::new).toList();
     }
 
 }
