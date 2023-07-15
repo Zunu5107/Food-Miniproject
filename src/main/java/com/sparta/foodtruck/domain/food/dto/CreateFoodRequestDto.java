@@ -1,6 +1,5 @@
 package com.sparta.foodtruck.domain.food.dto;
 
-import com.sparta.foodtruck.domain.food.entity.FoodValue;
 import lombok.Getter;
 import lombok.Setter;
 

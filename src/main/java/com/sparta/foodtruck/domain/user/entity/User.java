@@ -1,11 +1,9 @@
 package com.sparta.foodtruck.domain.user.entity;
 
-import com.sparta.foodtruck.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter

@@ -1,11 +1,8 @@
 package com.sparta.foodtruck.domain.food.dto;
 
 import com.sparta.foodtruck.domain.food.entity.FoodComment;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter

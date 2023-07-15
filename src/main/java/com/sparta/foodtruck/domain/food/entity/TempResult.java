@@ -1,9 +1,9 @@
 package com.sparta.foodtruck.domain.food.entity;
 
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 import java.util.UUID;
+import java.time.LocalDateTime;
+
 @Getter
 public class TempResult {
     UUID uuid;

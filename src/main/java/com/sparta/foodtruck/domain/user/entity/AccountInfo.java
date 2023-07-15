@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountInfo {
     @Id
+    @Column(name = "user_id")
     private Long id;
 
     private String username;

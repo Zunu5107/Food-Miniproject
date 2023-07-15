@@ -1,7 +1,6 @@
 package com.sparta.foodtruck.global.config;
 
 
-
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsServiceImpl;
 import com.sparta.foodtruck.global.jwt.JwtAuthenticationFilter;
 import com.sparta.foodtruck.global.jwt.JwtAuthorizationFilter;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -81,6 +79,7 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/api/user/**").permitAll() // '/api/users/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );

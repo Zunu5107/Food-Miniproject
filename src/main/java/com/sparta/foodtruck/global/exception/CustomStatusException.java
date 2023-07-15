@@ -1,6 +1,5 @@
 package com.sparta.foodtruck.global.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 public class CustomStatusException extends RuntimeException{
