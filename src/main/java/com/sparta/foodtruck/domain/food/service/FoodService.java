@@ -3,6 +3,7 @@ package com.sparta.foodtruck.domain.food.service;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.foodtruck.domain.food.dto.*;
 import com.sparta.foodtruck.domain.food.entity.Food;
+import com.sparta.foodtruck.domain.food.entity.FoodComment;
 import com.sparta.foodtruck.domain.food.entity.FoodValue;
 import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;
@@ -31,6 +32,7 @@ public class FoodService {
     private final FoodValueRepository foodValueRepository;
     private final AccountInfoRepository accountInfoRepository;
     private final JPAQueryFactory queryFactory;
+    private final FoodCommentRepository foodCommentRepository;
 
 
     public ResponseEntity<CustomStatusResponseDto> createFood(CreateFoodRequestDto requestDto) {
@@ -107,17 +109,23 @@ public class FoodService {
 
     }
 
-    public List<CommentResponseDto> addComment(Long foodId, CommentRequestDto requestDto) {
+    @Transactional
+    public ResponseEntity<List<CommentResponseDto>> addComment(Long foodId, CommentRequestDto requestDto) {
         Food food = findFood(foodId);
 
-        foodRepository.save(food);
-        return null;
+        // foodComment food / account = null / account.username / content
+        FoodComment foodComment = new FoodComment(food, requestDto.getUsername(), requestDto.getContent());
+        foodCommentRepository.save(foodComment);
+        // 테스트 ㄱㄱ
+        return ResponseEntity.status(201).body(getCommentByFood(foodId));
+
     }
 
     public List<CommentResponseDto> getCommentByFood(Long foodId) {
         Food food = findFood(foodId);
         return null;
     }
+
 }
 
 

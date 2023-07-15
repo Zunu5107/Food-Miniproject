@@ -1,8 +1,6 @@
 package com.sparta.foodtruck.domain.food.controller;
 
 import com.sparta.foodtruck.domain.food.dto.*;
-import com.sparta.foodtruck.domain.food.entity.Food;
-import com.sparta.foodtruck.domain.food.entity.FoodValue;
 import com.sparta.foodtruck.domain.food.service.FoodService;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -64,12 +62,11 @@ public class FoodController {
         return foodService.likeFood(foodId, token);
     }
 
-//    @PostMapping("/{foodId}/comment")
-//    public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long foodId,
-//                                                         @RequestBody CommentRequestDto requestDto) {
-//        List<CommentResponseDto> commentList = foodService.addComment();
-//        return ResponseEntity.ok();
-//    }
+    @PostMapping("/{foodId}/comment")
+    public ResponseEntity<List<CommentResponseDto>> addComment(@PathVariable Long foodId,
+                                               @RequestBody CommentRequestDto requestDto) {
+        return foodService.addComment(foodId, requestDto);
+    }
 
     @GetMapping("/{foodId}/comment")
     public List<CommentResponseDto> getCommentByFood(@PathVariable Long foodId) {

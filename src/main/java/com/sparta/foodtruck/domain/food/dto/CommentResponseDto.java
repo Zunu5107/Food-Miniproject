@@ -13,5 +13,4 @@ public class CommentResponseDto {
 
     private List<CommentDto> commentList;
 
-
 }
