@@ -10,8 +10,8 @@ import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;
 import com.sparta.foodtruck.domain.user.entity.AccountInfo;
 import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
+import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import static com.sparta.foodtruck.domain.food.entity.QFoodValue.foodValue;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,19 +34,20 @@ public class FoodService {
 
 
 
-    public List<FoodResponseDto> resultFood(FoodRequestDto requestDto) {
 
+    public ResponseEntity<List<FoodResponseDto>> resultFood(FoodRequestDto requestDto) {
 
-        List<Food> foodList = foodRepository.findAllBySaltyAndAndSpicyAndAndWorldAndAndHotOrderByFoodCountDesc(requestDto.isSalty(), requestDto.getSpicy(), requestDto.getWorld(), requestDto.isHot());
-        List<FoodResponseDto> foodResponseDto = new ArrayList<>();
-        for (Food food : foodList) {
-            foodResponseDto.add(new FoodResponseDto(food));
-            foodRepository.updateFoodCount(food.getId());
-        }
-        return foodResponseDto;
-//    if(requestDto.getSpicy() == 0 || requestDto.getSpicy() == 1) {
-//        requestDto.setSpicy(1);
+        List<Food> findFood = queryFactory
+                .select(foodValue.food)
+                .from(foodValue)
+                .where(foodValue.salty.eq(requestDto.isSalty()),
+                        foodValue.spicy.eq(requestDto.getSpicy()),
+                        foodValue.world.eq(FoodValue.FoodWorldValue.findByNumber(requestDto.getWorld())),
+                        foodValue.hot.eq(requestDto.isHot()))
+                .fetch();
+//        List<Food> foodList = findFood.stream().map(e -> e.getFood()).toList();
 
+        return ResponseEntity.ok(findFood.stream().map(FoodResponseDto::new).toList());
     }
 
     public List<FoodResponseDto> getFoodRank() {
@@ -58,14 +61,14 @@ public class FoodService {
     }
 
     @Transactional
-    public boolean choiceFood(Long foodId, FoodRequestDto requestDto) {
+    public CustomStatusResponseDto choiceFood(Long foodId, FoodRequestDto requestDto) {
         Food food = findFood(foodId);
 
-        if (food.getFoodName().equals(requestDto.getFoodName())) {
-            food.setFoodName(requestDto.getFoodName());
-            return true;
-        }
-        return false;
+//        if (food.getFoodName().equals(requestDto.getFoodName())) {
+//            food.setFoodName(requestDto.getFoodName());
+//            return new CustomStatusResponseDto(true);
+//        }
+        return new CustomStatusResponseDto(false);
     }
 
     private Food findFood(Long foodId) {
@@ -93,7 +96,7 @@ public class FoodService {
 
     }
 
-    public List<CommentResponseDto> addComment(Long foodId, String token, CommentRequestDto requestDto) {
+    public List<CommentResponseDto> addComment(Long foodId, CommentRequestDto requestDto) {
         Food food = findFood(foodId);
 
         foodRepository.save(food);

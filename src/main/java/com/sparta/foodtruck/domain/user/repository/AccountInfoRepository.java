@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface AccountInfoRepository extends JpaRepository<AccountInfo, Long> {
   Optional<AccountInfo> findByUsername(String username);
-  AccountInfo findByToken(String token);
 }

@@ -14,7 +14,4 @@ public class FoodRequestDto {
     private int spicy;
     private int world;
     private boolean hot;
-    private String foodName;
-
-
 }

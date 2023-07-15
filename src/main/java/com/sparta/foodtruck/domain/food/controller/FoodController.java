@@ -1,7 +1,10 @@
 package com.sparta.foodtruck.domain.food.controller;
 
 import com.sparta.foodtruck.domain.food.dto.*;
+import com.sparta.foodtruck.domain.food.entity.Food;
+import com.sparta.foodtruck.domain.food.entity.FoodValue;
 import com.sparta.foodtruck.domain.food.service.FoodService;
+import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +19,13 @@ public class FoodController {
     private final FoodService foodService;
 
     @PostMapping("/result")
-    public List<FoodResponseDto> resultFood(@RequestBody FoodRequestDto requestDto) {
+    public ResponseEntity<List<FoodResponseDto>> resultFood(@RequestBody FoodRequestDto requestDto) {
         return foodService.resultFood(requestDto);
     }
 
     @PutMapping("/{foodId}/choice")
-    public boolean choiceFood(@PathVariable Long foodId,
-                              @RequestBody FoodRequestDto requestDto) {
+    public CustomStatusResponseDto choiceFood(@PathVariable Long foodId,
+                                              @RequestBody FoodRequestDto requestDto) {
         return foodService.choiceFood(foodId, requestDto);
     }
 
@@ -37,16 +40,12 @@ public class FoodController {
         return foodService.likeFood(foodId, token);
     }
 
-    @PostMapping("/{foodId}/comment")
-    public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long foodId,
-                                                         @RequestHeader("Authorization") String token,
-                                                         @RequestBody CommentRequestDto requestDto) {
-        CommentDto comment = new CommentDto(requestDto.getUsername(), requestDto.getContent());
-        foodService.addComment(foodId, token, requestDto);
-
-
-        return null;
-    }
+//    @PostMapping("/{foodId}/comment")
+//    public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long foodId,
+//                                                         @RequestBody CommentRequestDto requestDto) {
+//        List<CommentResponseDto> commentList = foodService.addComment();
+//        return ResponseEntity.ok();
+//    }
 
     @GetMapping("/{foodId}/comment")
     public List<CommentResponseDto> getCommentByFood(@PathVariable Long foodId) {

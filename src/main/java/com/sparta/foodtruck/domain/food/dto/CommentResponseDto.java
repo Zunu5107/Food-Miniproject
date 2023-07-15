@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentResponseDto {
 
-    private List<CommentDto> msgList;
+    private List<CommentDto> commentList;
 
 
 }
