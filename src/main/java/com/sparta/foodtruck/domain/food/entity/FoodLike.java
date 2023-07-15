@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,5 +28,9 @@ public class FoodLike {
     public FoodLike(AccountInfo accountInfo, Food food) {
         this.accountInfo = accountInfo;
         this.food = food;
+    }
+
+    public UUID generateUUID() {
+        return UUID.randomUUID();
     }
 }

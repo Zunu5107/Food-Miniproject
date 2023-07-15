@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AccountInfoRepository extends JpaRepository<AccountInfo, Long> {
-
-    Optional<AccountInfo> findByUsername(String username);
+  Optional<AccountInfo> findByUsername(String username);
+  AccountInfo findByToken(String token);
 }

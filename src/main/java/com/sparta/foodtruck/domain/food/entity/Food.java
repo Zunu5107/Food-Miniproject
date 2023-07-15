@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.UUID;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Food {
 
@@ -20,12 +24,30 @@ public class Food {
 
     Long selectBy;
 
-    @OneToOne
-    FoodValue foodValue;
+    UUID uuid;
+
+//    @OneToOne
+//    FoodValue foodValue;
+
+    // 단짠
+    boolean salty;
+    // 맵기
+    int spicy; // 1,2,3
+    // 나라별 음식
+    int world;
+    // 뜨거운거
+    boolean hot;
+
+    // 조회수
+    int foodCount;
+
+    // 좋아요
+    int foodLike;
 
     public Food(String foodName, String imageUrl) {
         this.foodName = foodName;
         this.imageUrl = imageUrl;
         this.selectBy = 0L;
     }
+
 }
