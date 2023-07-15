@@ -12,14 +12,12 @@ public class FoodResponseDto {
 
     private Long id;
     private String name;
-    private String comment;
     private String imageUrl;
 
 
-    public FoodResponseDto(Long id, String name, String comment, String imageUrl) {
+    public FoodResponseDto(Long id, String name, String imageUrl) {
         this.id = id;
         this.name = name;
-        this.comment = comment;
         this.imageUrl = imageUrl;
     }
 

@@ -18,6 +18,30 @@ public class FoodController {
 
     private final FoodService foodService;
 
+    @PostMapping
+    public ResponseEntity<CustomStatusResponseDto> createFood(@RequestBody CreateFoodRequestDto requestDto){
+        return foodService.createFood(requestDto);
+    }
+
+    /**
+     *
+     * @param requestDto
+     * {
+     * gender: true | false
+     * salty: true | false
+     * spicy: (0 - 4)
+     * world : (0 - 4)
+     * hot = true | false
+     * }
+     * @return
+     * foodList : [
+     * {
+     * id : Number
+     * name: “foodName”,
+     * ImageUrl : “url”
+     * comment : []
+     * } ….
+     */
     @PostMapping("/result")
     public ResponseEntity<List<FoodResponseDto>> resultFood(@RequestBody FoodRequestDto requestDto) {
         return foodService.resultFood(requestDto);

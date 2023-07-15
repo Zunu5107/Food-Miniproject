@@ -62,7 +62,8 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {
             web.ignoring()
-                    .requestMatchers(new AntPathRequestMatcher("/api/user"));
+                    .requestMatchers(new AntPathRequestMatcher("/api/user"))
+                    .requestMatchers(new AntPathRequestMatcher("/api/**"));
         };
     }
 

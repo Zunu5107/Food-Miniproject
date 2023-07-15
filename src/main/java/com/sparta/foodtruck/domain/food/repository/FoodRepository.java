@@ -16,13 +16,11 @@ import java.util.UUID;
 public interface FoodRepository extends JpaRepository<Food, Long> {
 
 
-    List<Food> findAllBySaltyAndAndSpicyAndAndWorldAndAndHotOrderByFoodCountDesc(boolean salty, int spicy, int world, boolean hot);
+//    List<Food> findAllBySaltyAndAndSpicyAndAndWorldAndAndHotOrderByFoodCountDesc(boolean salty, int spicy, int world, boolean hot);
 
-    @Modifying
-    @Query("update Food food set food.foodCount = food.foodCount + 1 where food.id = :id")
-    int updateFoodCount(Long id);
-    @Query("SELECT f FROM Food f ORDER BY f.foodCount DESC")
-    Page<Food> findAllOrderByFoodCountDesc(Pageable pageable);
-
-    Optional<Object> findById(UUID foodId);
+//    @Modifying
+//    @Query("update Food food set food.foodCount = food.foodCount + 1 where food.id = :id")
+//    int updateFoodCount(Long id);
+//    @Query("SELECT f FROM Food f ORDER BY f.foodCount DESC")
+//    Page<Food> findAllOrderByFoodCountDesc(Pageable pageable);
 }

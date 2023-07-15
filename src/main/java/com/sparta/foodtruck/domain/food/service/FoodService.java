@@ -1,14 +1,12 @@
 package com.sparta.foodtruck.domain.food.service;
 
-import com.sparta.foodtruck.domain.food.dto.CommentRequestDto;
-import com.sparta.foodtruck.domain.food.dto.CommentResponseDto;
-import com.sparta.foodtruck.domain.food.dto.FoodRequestDto;
-import com.sparta.foodtruck.domain.food.dto.FoodResponseDto;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.foodtruck.domain.food.dto.*;
 import com.sparta.foodtruck.domain.food.entity.Food;
-import com.sparta.foodtruck.domain.food.entity.FoodLike;
+import com.sparta.foodtruck.domain.food.entity.FoodValue;
 import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;
-import com.sparta.foodtruck.domain.user.entity.AccountInfo;
+import com.sparta.foodtruck.domain.food.repository.FoodValueRepository;
 import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +28,21 @@ public class FoodService {
 
     private final FoodRepository foodRepository;
     private final FoodLikeRepository foodLikeRepository;
+    private final FoodValueRepository foodValueRepository;
     private final AccountInfoRepository accountInfoRepository;
+    private final JPAQueryFactory queryFactory;
 
+
+    public ResponseEntity<CustomStatusResponseDto> createFood(CreateFoodRequestDto requestDto) {
+        Food newFood = new Food(requestDto.getFoodName(), requestDto.getImageUrl());
+        newFood = foodRepository.save(newFood);
+
+        //FoodValue(Long id, Food food, Boolean salty, Boolean hot, Integer spicy, FoodWorldValue world)
+        FoodValue newFoodValue = new FoodValue(newFood, requestDto.getSalty(), requestDto.getHot(), requestDto.getSpicy(), FoodValue.FoodWorldValue.findByNumber(requestDto.getWorld()));
+        foodValueRepository.save(newFoodValue);
+
+        return ResponseEntity.ok(new CustomStatusResponseDto(true));
+    }
 
 
 
@@ -52,11 +63,11 @@ public class FoodService {
 
     public List<FoodResponseDto> getFoodRank() {
         Pageable pageable = PageRequest.of(0, 5); // 5개씩 끊어서(1,2,3,4,5까지 조회)
-        Page<Food> foodList = foodRepository.findAllOrderByFoodCountDesc(pageable);
+//        Page<Food> foodList = foodRepository.findAllOrderByFoodCountDesc(pageable);
         List<FoodResponseDto> foodResponseDto = new ArrayList<>();
-        for (Food food : foodList) {
-            foodResponseDto.add(new FoodResponseDto(food));
-        }
+//        for (Food food : foodList) {
+//            foodResponseDto.add(new FoodResponseDto(food));
+//        }
         return foodResponseDto;
     }
 
@@ -81,17 +92,17 @@ public class FoodService {
         Food food = findFood(foodId);
         boolean isFirstLike = false;
 
-        AccountInfo accountInfo = accountInfoRepository.findByToken(token); // 사용자 정보 조회
+//        AccountInfo accountInfo = accountInfoRepository.findByToken(token); // 사용자 정보 조회
 
-        if (accountInfo != null) {
-            FoodLike foodLike = foodLikeRepository.findByAccountInfoAndFood(accountInfo, food); // 사용자가 좋아요를 눌렀는가
-            if (foodLike == null) { // 처음 누르면
-                foodLike = new FoodLike(accountInfo, food);
-                isFirstLike = true;
-                foodLikeRepository.save(foodLike); // 좋아요 저장
-            }
-            foodLikeRepository.delete(foodLike); // 좋아요 삭제
-        }
+//        if (accountInfo != null) {
+//            FoodLike foodLike = foodLikeRepository.findByAccountInfoAndFood(accountInfo, food); // 사용자가 좋아요를 눌렀는가
+//            if (foodLike == null) { // 처음 누르면
+//                foodLike = new FoodLike(accountInfo, food);
+//                isFirstLike = true;
+//                foodLikeRepository.save(foodLike); // 좋아요 저장
+//            }
+//            foodLikeRepository.delete(foodLike); // 좋아요 삭제
+//        }
         return isFirstLike;
 
     }

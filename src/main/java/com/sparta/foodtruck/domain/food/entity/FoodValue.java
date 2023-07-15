@@ -1,22 +1,23 @@
 package com.sparta.foodtruck.domain.food.entity;
 
 import com.sparta.foodtruck.domain.food.dto.FoodRequestDto;
-import com.sparta.foodtruck.domain.food.dto.FoodResponseDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import lombok.AccessLevel;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Entity
 @Getter
 @NoArgsConstructor//(access = AccessLevel.PROTECTED)
 public class FoodValue {
+
     @Id
+    @Column(name = "food_id", nullable = false)
     Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
+    @MapsId
+    @JoinColumn(name = "food_id")
     Food food;
 
     Boolean salty;
@@ -27,8 +28,7 @@ public class FoodValue {
 
     FoodWorldValue world;
 
-    public FoodValue(Long id, Food food, Boolean salty, Boolean hot, Integer spicy, FoodWorldValue world) {
-        this.id = id;
+    public FoodValue(Food food, Boolean salty, Boolean hot, Integer spicy, FoodWorldValue world) {
         this.food = food;
         this.salty = salty;
         this.hot = hot;
@@ -49,7 +49,15 @@ public class FoodValue {
             this.value = value;
         }
 
-        static FoodWorldValue findByNumber(int num) {
+        public static FoodWorldValue findByNumber(int num) {
+            for (FoodWorldValue foodWorldValue : FoodWorldValue.values()) {
+                if (num == foodWorldValue.value) {
+                    return foodWorldValue;
+                }
+            }
+            throw new IllegalArgumentException("올바른 숫자가 없습니다.");
+        }
+        public static FoodWorldValue findByNumber(Integer num) {
             for (FoodWorldValue foodWorldValue : FoodWorldValue.values()) {
                 if (num == foodWorldValue.value) {
                     return foodWorldValue;
