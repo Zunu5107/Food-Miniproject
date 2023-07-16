@@ -20,6 +20,12 @@ public class RedisService {
         return values.get(key);
     }
 
+//    public String getKey(String value) {
+//        //opsForValue : Strings를 쉽게 Serialize / Deserialize 해주는 Interface
+//        ValueOperations<String, String> values = redisTemplate.opsForValue();
+//        return values.get(key);
+//    }
+
     public void setValues(String key, String value) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, value);
@@ -29,6 +35,12 @@ public class RedisService {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
         values.set(key, value, expireDuration);
+    }
+
+    public boolean existKey(String key) {
+        //opsForValue : Strings를 쉽게 Serialize / Deserialize 해주는 Interface
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        return values.get(key) == null;
     }
 
 //    public void setSets(String key, String... values) {

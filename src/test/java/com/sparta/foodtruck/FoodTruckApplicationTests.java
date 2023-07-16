@@ -23,6 +23,7 @@ class FoodTruckApplicationTests {
     @Test
     void Test1(){
         redisService.setValuesByExpireSecond("hello", "world", 10L);
+        redisService.setValuesByExpireSecond("hello", "world", 10L);
 //        String get = redisService.getValues("hello");
 //        System.out.println("get = " + get);
     }
