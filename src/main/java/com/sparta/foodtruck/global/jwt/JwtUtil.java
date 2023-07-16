@@ -2,6 +2,7 @@ package com.sparta.foodtruck.global.jwt;
 
 
 import com.sparta.foodtruck.domain.user.entity.UserRoleEnum;
+import com.sparta.foodtruck.global.util.AESUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -25,6 +26,10 @@ import java.util.Date;
 public class JwtUtil {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    public static final String ACCESS_HEADER = "AccessToken";
+
+    public static final String REFRESH_HEADER = "refreshToken";
 
     // 사용자 권한 값의 KEY
     public static final String AUTHORIZATION_KEY = "auth";
@@ -58,6 +63,18 @@ public class JwtUtil {
                         .setSubject(username) // 사용자 식별자값(ID)
                         .claim(AUTHORIZATION_KEY, role) // 사용자 권한
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setIssuedAt(date) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .compact();
+    }
+
+    public String createTokenRefresh(String username) {
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username) // 사용자 식별자값(ID)
+                        .setExpiration(new Date(date.getTime() + (TOKEN_TIME * 24L))) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
@@ -148,6 +165,14 @@ public class JwtUtil {
     }
 
     public String getTokenFromRequestHeader(String headerName, HttpServletRequest req) {
+        // 헤더 확인하기
+//        Enumeration em = req.getHeaderNames();
+//        while(em.hasMoreElements()) {
+//            String name = (String)em.nextElement();
+//            String value = req.getHeader(name);
+//            System.out.println("name = " + name);
+//            System.out.println("value = " + value);
+//        }
         String token = req.getHeader(headerName);
         if (token != null) {
             try {

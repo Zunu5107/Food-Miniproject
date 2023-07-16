@@ -24,6 +24,8 @@ public class FoodValue {
 
     Boolean hot;
 
+    Boolean night;
+
     Integer spicy;
 
     FoodWorldValue world;

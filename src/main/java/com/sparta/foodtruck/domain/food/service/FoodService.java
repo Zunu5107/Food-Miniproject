@@ -11,6 +11,7 @@ import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodValueRepository;
 import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
+import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -126,8 +127,18 @@ public class FoodService {
 
     }
 
+
+    public ResponseEntity<List<CommentResponseDto>> addComment(Long foodId, UserDetailsImpl userDetails, CommentRequestDto requestDto) {
+        Food food = findFood(foodId);
+
+        // foodComment food / account = null / account.username / content
+        FoodComment foodComment = new FoodComment(food, userDetails.getAccountInfo(), requestDto.getContent());
+        foodCommentRepository.save(foodComment);
+        // 테스트 ㄱㄱ
+        return ResponseEntity.status(201).body(getCommentByFood(foodId));
+    }
     @Transactional
-    public ResponseEntity<List<CommentResponseDto>> addComment(Long foodId, CommentRequestDto requestDto) {
+    public ResponseEntity<List<CommentResponseDto>> addCommentDebug(Long foodId, CommentRequestDebugDto requestDto) {
         Food food = findFood(foodId);
 
         // foodComment food / account = null / account.username / content
@@ -135,7 +146,6 @@ public class FoodService {
         foodCommentRepository.save(foodComment);
         // 테스트 ㄱㄱ
         return ResponseEntity.status(201).body(getCommentByFood(foodId));
-
     }
 
     // 이게 어차피 food 조회해 주는 거잖아 넹
@@ -144,7 +154,6 @@ public class FoodService {
         List<FoodComment> foodCommentList = queryFactory.selectFrom(foodComment).where(foodComment.food.id.eq(foodId)).orderBy(foodComment.id.desc()).fetch();
         return foodCommentList.stream().map(CommentResponseDto::new).toList();
     }
-
 }
 
 

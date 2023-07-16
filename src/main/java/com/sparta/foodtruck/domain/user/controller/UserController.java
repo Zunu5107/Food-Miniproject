@@ -1,14 +1,18 @@
 package com.sparta.foodtruck.domain.user.controller;
 
-import com.sparta.foodtruck.domain.user.dto.SignupRequestDto;
+import com.sparta.foodtruck.domain.user.dto.*;
+import com.sparta.foodtruck.domain.user.exception.CustomSameUsernameException;
+import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.domain.user.service.UserService;
+import com.sparta.foodtruck.global.dto.CustomStatusAndMessageResponseDto;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +22,39 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<CustomStatusResponseDto> createAccount(@RequestBody SignupRequestDto requestDto){
+    public ResponseEntity<CustomStatusResponseDto> createAccount(@RequestBody @Valid SignupRequestDto requestDto){
         return userService.createAccount(requestDto);
+    }
+
+    @PostMapping("/signup/password")
+    public ResponseEntity<CustomStatusResponseDto> passwordCheck(@RequestBody @Valid PasswordRequestDto requestDto){
+        return ResponseEntity.ok(new CustomStatusResponseDto(true));
+    }
+
+    @GetMapping("/passwordcheck")
+    public ResponseEntity<UsernameResponseDto> passwordCheck(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseEntity.ok(new UsernameResponseDto(userDetails.getUsername()));
+    }
+
+    @PostMapping("/signup/username")
+    public ResponseEntity<CustomStatusResponseDto> usernameCheck(@RequestBody UsernameVaildRequestDto requestDto){
+        return userService.usernameCheck(requestDto);
+    }
+
+    @PostMapping("/signup/address")
+    public ResponseEntity<CustomStatusResponseDto> addressCheck(@RequestBody @Valid AddressSameRequestDto requestDto){
+        return userService.addressCheck(requestDto);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomStatusAndMessageResponseDto> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
+        CustomStatusAndMessageResponseDto responseDto = new CustomStatusAndMessageResponseDto(false);
+        exception.getBindingResult().getFieldErrors().forEach(e -> responseDto.addMessage(e.getField(), e.getDefaultMessage()));
+        return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(responseDto);
+    }
+    @ExceptionHandler(CustomSameUsernameException.class)
+    public ResponseEntity<CustomStatusResponseDto> CustomSameUsernameExceptionHandler(CustomSameUsernameException exception){
+        CustomStatusResponseDto responseDto = new CustomStatusResponseDto(false);
+        return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(responseDto);
     }
 }

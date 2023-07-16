@@ -2,14 +2,20 @@ package com.sparta.foodtruck.domain.food.controller;
 
 import com.sparta.foodtruck.domain.food.dto.*;
 import com.sparta.foodtruck.domain.food.service.FoodService;
+import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/food")
 @RequiredArgsConstructor
@@ -62,14 +68,24 @@ public class FoodController {
         return foodService.likeFood(foodId, token);
     }
 
+
     @PostMapping("/{foodId}/comment")
     public ResponseEntity<List<CommentResponseDto>> addComment(@PathVariable Long foodId,
+                                                               @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                @RequestBody CommentRequestDto requestDto) {
-        return foodService.addComment(foodId, requestDto);
+        return foodService.addComment(foodId, userDetails, requestDto);
+    }
+
+    @PostMapping("/{foodId}/comment/debug")
+    public ResponseEntity<List<CommentResponseDto>> addCommentDebug(@PathVariable Long foodId,
+                                                                    @RequestBody CommentRequestDebugDto requestDto) {
+        return foodService.addCommentDebug(foodId, requestDto);
     }
 
     @GetMapping("/{foodId}/comment")
     public List<CommentResponseDto> getCommentByFood(@PathVariable Long foodId) {
-        return foodService.getCommentByFood(foodId);
+        List<CommentResponseDto> responseDtos = foodService.getCommentByFood(foodId);
+        responseDtos.forEach(e -> log.info(e.toString()));
+        return responseDtos;
     }
 }

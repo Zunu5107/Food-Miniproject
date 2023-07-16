@@ -3,9 +3,11 @@ package com.sparta.foodtruck.domain.food.dto;
 import com.sparta.foodtruck.domain.food.entity.FoodComment;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class CommentResponseDto {
 
     private String username;

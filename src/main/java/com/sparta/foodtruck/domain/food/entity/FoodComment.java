@@ -1,7 +1,7 @@
 package com.sparta.foodtruck.domain.food.entity;
 
 
-import com.sparta.foodtruck.domain.food.dto.CommentRequestDto;
+import com.sparta.foodtruck.domain.food.dto.CommentRequestDebugDto;
 import com.sparta.foodtruck.domain.user.entity.AccountInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,8 +33,15 @@ public class FoodComment {
         this.content = content;
     }
 
+    public FoodComment(Food food, AccountInfo accountInfo, String content) {
+        this.food = food;
+        this.accountInfo = accountInfo;
+        this.username = accountInfo.getUsername();
+        this.content = content;
+    }
 
-    public void add(CommentRequestDto requestDto) {
+
+    public void add(CommentRequestDebugDto requestDto) {
         this.username = requestDto.getUsername();
         this.content = requestDto.getContent();
     }

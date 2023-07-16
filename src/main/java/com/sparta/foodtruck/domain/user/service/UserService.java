@@ -1,7 +1,13 @@
 package com.sparta.foodtruck.domain.user.service;
 
+import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.foodtruck.domain.user.dto.AddressSameRequestDto;
 import com.sparta.foodtruck.domain.user.dto.SignupRequestDto;
+import com.sparta.foodtruck.domain.user.dto.UsernameResponseDto;
+import com.sparta.foodtruck.domain.user.dto.UsernameVaildRequestDto;
 import com.sparta.foodtruck.domain.user.entity.AccountInfo;
+import com.sparta.foodtruck.domain.user.entity.QUser;
 import com.sparta.foodtruck.domain.user.entity.User;
 import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
 import com.sparta.foodtruck.domain.user.repository.UserRepository;
@@ -16,11 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.sparta.foodtruck.domain.user.entity.QUser.user;
+
 @Service
 @Slf4j(topic = "UserService")
 @RequiredArgsConstructor
 public class UserService {
 
+    private final JPAQueryFactory queryFactory;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AccountInfoRepository accountInfoRepository;
@@ -50,5 +59,24 @@ public class UserService {
         accountInfoRepository.save(accountInfo);
 
         return ResponseEntity.status(201).body(responseDto);
+    }
+    public ResponseEntity<CustomStatusResponseDto> usernameCheck(UsernameVaildRequestDto requestDto){
+        Optional<AccountInfo> checkUsername = accountInfoRepository.findByUsername(requestDto.getUsername());
+
+        if (checkUsername.isPresent()) {
+            throw CustomStatusException.builder("Same Username").status(409).build();
+        }
+
+        return ResponseEntity.ok(new CustomStatusResponseDto(true));
+    }
+
+    public ResponseEntity<CustomStatusResponseDto> addressCheck(AddressSameRequestDto requestDto) {
+//        Optional<User> checkAddress = userRepository.findByAddress(requestDto.getAddress());
+        Long userId = queryFactory.select(user.id).from(user).where(user.address.eq(requestDto.getAddress())).fetchFirst();
+        if (userId != null) {
+            throw CustomStatusException.builder("Same Id").status(409).build();
+        }
+
+        return ResponseEntity.ok(new CustomStatusResponseDto(true));
     }
 }
