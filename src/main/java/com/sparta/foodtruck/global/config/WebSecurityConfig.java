@@ -31,8 +31,6 @@ public class WebSecurityConfig { // 이 개 같은거 설명좀 해주실 분 ?
 
     private final JwtUtil jwtUtil;
     private final CorsConfig corsConfig;
-
-    private final RedisService redisService;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -40,13 +38,11 @@ public class WebSecurityConfig { // 이 개 같은거 설명좀 해주실 분 ?
 
     @Autowired
     public WebSecurityConfig(JwtUtil jwtUtil, CorsConfig corsConfig,
-                             RedisService redisService,
                              PasswordEncoder passwordEncoder,
                              UserDetailsServiceImpl userDetailsService,
                              AuthenticationConfiguration authenticationConfiguration) {
         this.jwtUtil = jwtUtil;
         this.corsConfig = corsConfig;
-        this.redisService = redisService;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.authenticationConfiguration = authenticationConfiguration;
@@ -100,7 +96,8 @@ public class WebSecurityConfig { // 이 개 같은거 설명좀 해주실 분 ?
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers(HttpMethod.POST,"/api/user/**").permitAll() // '/api/users/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers("/api/user/**").permitAll() // '/api/users/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers(HttpMethod.GET, "/api/food/**").permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리

@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Set;
 
 
 @Service
@@ -34,6 +33,12 @@ public class RedisService {
     public void setValuesByExpireSecond(String key, String value, Long duration) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
+        values.set(key, value, expireDuration);
+    }
+
+    public void setValuesByExpireDay(String key, String value, Long duration) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        Duration expireDuration = Duration.ofDays(duration);
         values.set(key, value, expireDuration);
     }
 

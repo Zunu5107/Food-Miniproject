@@ -57,6 +57,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            log.info("Vaildate Correct");
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
             try {

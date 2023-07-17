@@ -52,6 +52,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         redisService.setValues(uuid, username);
     }
 
+    public void saveUsernameByRedisExpireDay(String uuid, String username, Long Day){
+        redisService.setValuesByExpireDay(uuid, username, Day);
+    }
+
     public String encryptAES(String uuid){
         return aesUtil.encrypt(uuid);
     }

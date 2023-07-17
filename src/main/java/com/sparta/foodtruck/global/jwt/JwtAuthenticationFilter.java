@@ -70,7 +70,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private void MakeRefreshToken(HttpServletResponse response, String username){
         String redisKey = UUID.randomUUID().toString();
-        userDetailsService.saveUsernameByRedis(redisKey, username);
+        //userDetailsService.saveUsernameByRedis(redisKey, username);
+        userDetailsService.saveUsernameByRedisExpireDay(redisKey, username, 1L);
         redisKey = userDetailsService.encryptAES(redisKey);
         String token = jwtUtil.createTokenRefresh(redisKey);
         jwtUtil.addJwtToHeader(token, AUTHORIZATION_HEADER, response);

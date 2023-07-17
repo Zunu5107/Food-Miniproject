@@ -46,12 +46,23 @@ public class UserController {
         return userService.addressCheck(requestDto);
     }
 
+    @GetMapping("/test")
+    public Boolean addressCheck(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userDetails == null;
+    }
+
+    @GetMapping("/test2")
+    public Boolean addressCheck(){
+        return true;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomStatusAndMessageResponseDto> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
         CustomStatusAndMessageResponseDto responseDto = new CustomStatusAndMessageResponseDto(false);
         exception.getBindingResult().getFieldErrors().forEach(e -> responseDto.addMessage(e.getField(), e.getDefaultMessage()));
         return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(responseDto);
     }
+
     @ExceptionHandler(CustomSameUsernameException.class)
     public ResponseEntity<CustomStatusResponseDto> CustomSameUsernameExceptionHandler(CustomSameUsernameException exception){
         CustomStatusResponseDto responseDto = new CustomStatusResponseDto(false);
