@@ -1,6 +1,8 @@
 package com.sparta.foodtruck.domain.food.dto;
 
 import com.sparta.foodtruck.domain.food.entity.FoodComment;
+import com.sparta.foodtruck.domain.user.dto.LoginRequestDto;
+import com.sparta.foodtruck.domain.user.dto.PasswordRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,6 +12,7 @@ import lombok.ToString;
 @ToString
 public class CommentResponseDto {
 
+    private Long commentId;
     private String username;
     private String content;
 
@@ -19,6 +22,7 @@ public class CommentResponseDto {
     }
 
     public CommentResponseDto(FoodComment foodComment){
+        this.commentId = foodComment.getId();
         this.username = foodComment.getUsername();
         this.content = foodComment.getContent();
     }

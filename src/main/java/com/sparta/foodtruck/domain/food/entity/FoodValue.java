@@ -26,7 +26,9 @@ public class FoodValue {
 
     Boolean night;
 
-    Integer spicy;
+    Integer minSpicy;
+
+    Integer maxSpicy;
 
     FoodWorldValue world;
 
@@ -34,7 +36,8 @@ public class FoodValue {
         this.food = food;
         this.salty = salty;
         this.hot = hot;
-        this.spicy = spicy;
+        this.minSpicy = spicy;
+        this.maxSpicy = spicy;
         this.world = world;
     }
 
@@ -72,7 +75,8 @@ public class FoodValue {
     public FoodValue(FoodRequestDto requestDto) {
 //        this.gender = requestDto.isGender();
         this.salty = requestDto.isSalty();
-        this.spicy = requestDto.getSpicy();
+        this.minSpicy = requestDto.getSpicy();
+        this.maxSpicy = requestDto.getSpicy();
         this.world = FoodWorldValue.findByNumber(requestDto.getWorld());
         this.hot = requestDto.isHot();
 

@@ -43,11 +43,18 @@ public class FoodController {
      * ImageUrl : “url”
      * comment : []
      * } ….
+     * ]
      */
     @PostMapping("/result")
     public ResponseEntity<List<FoodResponseDto>> resultFood(@RequestBody FoodRequestDto requestDto) {
         return foodService.resultFood(requestDto);
     }
+
+    @GetMapping("/result/random")
+    public List<FoodResponseDto> getRandomResult() {
+        return foodService.getRandomResult();
+    }
+
 
     @PutMapping("/{foodId}/choice")
     public CustomStatusResponseDto choiceFood(@PathVariable Long foodId,
@@ -63,11 +70,10 @@ public class FoodController {
     }
 
     @PostMapping("/{foodId}/like")
-    public boolean likeFood(@PathVariable Long foodId,
-                            @RequestHeader("Authorization") String token) {
-        return foodService.likeFood(foodId, token);
+    public Long likeFood(@PathVariable Long foodId,
+                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return foodService.likeFood(foodId, userDetails);
     }
-
 
     @PostMapping("/{foodId}/comment")
     public ResponseEntity<List<CommentResponseDto>> addComment(@PathVariable Long foodId,
@@ -85,7 +91,23 @@ public class FoodController {
     @GetMapping("/{foodId}/comment")
     public List<CommentResponseDto> getCommentByFood(@PathVariable Long foodId) {
         List<CommentResponseDto> responseDtos = foodService.getCommentByFood(foodId);
-        responseDtos.forEach(e -> log.info(e.toString()));
         return responseDtos;
+    }
+
+    // 댓글 수정, 삭제
+    @PatchMapping("/{foodId}/comment/{commentId}")
+    public List<CommentResponseDto> patchCommentByFood(@PathVariable Long foodId,
+                                                       @PathVariable Long commentId,
+                                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                       @RequestBody CommentRequestDebugDto requestDto) {
+        List<CommentResponseDto> responseDtos = foodService.patchCommentByFood(foodId, userDetails, commentId, requestDto);
+        return responseDtos;
+    }
+
+    @DeleteMapping("/{foodId}/comment/{commentId}")
+    public ResponseEntity<CustomStatusResponseDto> DeleteCommentByFood(@PathVariable Long foodId,
+                                                                       @PathVariable Long commentId,
+                                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return foodService.DeleteCommentByFood(foodId, commentId, userDetails);
     }
 }
