@@ -2,6 +2,7 @@ package com.sparta.foodtruck.global.config;
 
 
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsServiceImpl;
+import com.sparta.foodtruck.global.filter.CustomAuthenticationEntryPoint;
 import com.sparta.foodtruck.global.jwt.JwtAuthenticationFilter;
 import com.sparta.foodtruck.global.jwt.JwtAuthorizationFilter;
 import com.sparta.foodtruck.global.jwt.JwtUtil;
@@ -106,6 +107,11 @@ public class WebSecurityConfig { // 이 개 같은거 설명좀 해주실 분 ?
         );
 
         http.formLogin(Customizer.withDefaults());
+
+        // exceptionHandling 처리
+        http.exceptionHandling((httpSecurityExceptionHandlingConfigurer) ->
+                httpSecurityExceptionHandlingConfigurer
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
 
         //http.cors().configurationSource(corsConfigurationSource()) //---------- (1)
         http.addFilterBefore(corsConfig.corsFilter(), JwtAuthenticationFilter.class); // SPRING 3.0

@@ -47,8 +47,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             tokenValue = jwtUtil.substringToken(tokenValue);
             log.info(tokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
+            try {
+                if (!jwtUtil.validateToken(tokenValue)) {
+                    log.error("Token Error");
+                    return;
+                }
+            } catch (Exception e) {
+                exceptionHandler(res, e);
                 return;
             }
 
@@ -76,9 +81,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // JWT 토큰 substring
             tokenValue = jwtUtil.substringToken(tokenValue);
             log.info(tokenValue);
-
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
+            try {
+                if (!jwtUtil.validateToken(tokenValue)) {
+                    log.error("Token Error");
+                    return;
+                }
+            } catch (Exception e) {
+                exceptionHandler(res, e);
                 return;
             }
 
@@ -126,6 +135,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     public void exceptionHandler(HttpServletResponse response, Exception exception) throws IOException {
+        log.info("Exception Handler");
         ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto("");
         if (exception instanceof SecurityException || exception instanceof MalformedJwtException || exception instanceof SignatureException) {
             messageDto.setMessage("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
@@ -140,6 +150,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private void setFailResponse(HttpServletResponse response, ErrorLoginMessageDto errorLoginDto) throws IOException{
+        log.info("set Fail Response");
         response.setStatus(401);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

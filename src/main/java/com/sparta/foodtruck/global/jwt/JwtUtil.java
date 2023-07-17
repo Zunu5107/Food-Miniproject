@@ -131,14 +131,17 @@ public class JwtUtil {
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            throw e;
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+            throw e;
         } catch (UnsupportedJwtException e) {
             logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+            throw e;
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+            throw e;
         }
-        return false;
     }
 
     // 토큰에서 사용자 정보 가져오기
