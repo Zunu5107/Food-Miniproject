@@ -76,13 +76,13 @@ public class WebSecurityConfig { // 이 개 같은거 설명좀 해주실 분 ?
         return bean;
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> {
-            web.ignoring()
-                    .requestMatchers(new AntPathRequestMatcher("/api/food/**"));
-        };
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> {
+//            web.ignoring()
+//                    .requestMatchers(new AntPathRequestMatcher("/api/food/**"));
+//        };
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

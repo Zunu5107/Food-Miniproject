@@ -2,6 +2,7 @@ package com.sparta.foodtruck.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.foodtruck.domain.user.dto.LoginRequestDto;
+import com.sparta.foodtruck.domain.user.dto.UsernameVaildRequestDto;
 import com.sparta.foodtruck.domain.user.entity.UserRoleEnum;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsServiceImpl;
@@ -66,6 +67,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtUtil.addJwtToHeader(token, ACCESS_HEADER, response);
 
         MakeRefreshToken(response, username);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String str = objectMapper.writeValueAsString(new UsernameVaildRequestDto(username));
+        response.getWriter().write(str);
     }
 
     private void MakeRefreshToken(HttpServletResponse response, String username){
