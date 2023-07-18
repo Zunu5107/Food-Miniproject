@@ -30,11 +30,11 @@ public class FoodController {
 
     /**
      * @param requestDto {
-     *                      gender: true | false
-     *                      salty: true | false
-     *                      spicy: (0 - 4)
-     *                      world : (0 - 4)
-     *                      hot = true | false
+     *                   gender: true | false
+     *                   salty: true | false
+     *                   spicy: (0 - 4)
+     *                   world : (0 - 4)
+     *                   hot = true | false
      *                   }
      * @return foodList : [
      * {
@@ -84,9 +84,9 @@ public class FoodController {
     }
 
     @GetMapping("/{foodId}/comment")
-    public List<CommentResponseDto> getCommentByFood(@PathVariable Long foodId) {
-        List<CommentResponseDto> responseDtos = foodService.getCommentByFood(foodId);
-        return responseDtos;
+    public ResponseEntity<CommentListResponseDto> getCommentByFood(@PathVariable Long foodId,
+                                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return foodService.getCommentByFood(foodId, userDetails);
     }
 
     // 댓글 수정, 삭제
@@ -111,6 +111,6 @@ public class FoodController {
                                                                     @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                     @ModelAttribute CommentRequestDebugDto requestDto
     ) {
-        return foodService.addCommentDebugTwo(foodId,userDetails, requestDto);
+        return foodService.addCommentDebugTwo(foodId, userDetails, requestDto);
     }
 }

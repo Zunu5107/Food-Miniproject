@@ -12,7 +12,6 @@ import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import com.sparta.foodtruck.global.exception.CustomStatusException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,11 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static com.sparta.foodtruck.domain.food.entity.QFood.food;
 import static com.sparta.foodtruck.domain.food.entity.QFoodComment.foodComment;
@@ -62,7 +59,7 @@ public class FoodService {
 
     public ResponseEntity<List<FoodResponseDto>> resultFood(FoodRequestDto requestDto) {
         List<Long> findFood;
-        if( requestDto.getWorld() == 0 ){
+        if (requestDto.getWorld() == 0) {
             findFood = queryFactory
                     .select(foodValue.id)
                     .from(foodValue)
@@ -71,8 +68,7 @@ public class FoodService {
                             foodValue.minSpicy.loe(requestDto.getSpicy()),
                             foodValue.hot.eq(requestDto.isHot()))
                     .fetch();
-        }
-        else {
+        } else {
             findFood = queryFactory
                     .select(foodValue.id)
                     .from(foodValue)
@@ -85,22 +81,22 @@ public class FoodService {
         }
 
         Collections.shuffle(findFood);
-        while (findFood.size() < 4){
+        while (findFood.size() < 4) {
             Long Index = randomIndex();
-            if(!findFood.contains(Index)){
+            if (!findFood.contains(Index)) {
                 findFood.add(Index);
             }
         }
-        findFood = findFood.subList(0,4);
+        findFood = findFood.subList(0, 4);
 
         return ResponseEntity.ok(getResult(findFood).stream().map(FoodResponseDto::new).toList());
     }
 
-    private Long randomIndex(){
+    private Long randomIndex() {
         return (long) (Math.random() * (MAX_FOOD + 1));
     }
 
-    private List<Food> getResult(List<Long> num){
+    private List<Food> getResult(List<Long> num) {
         List<Food> resultFood = queryFactory.select(foodValue.food).from(foodValue).where(foodValue.id.in(num)).fetch();
         Collections.shuffle(resultFood);
         return resultFood;
@@ -108,9 +104,9 @@ public class FoodService {
 
     public List<FoodResponseDto> getRandomResult() {
         List<Long> initNumber = new ArrayList<>();
-        while (initNumber.size() < 4){
+        while (initNumber.size() < 4) {
             Long Index = randomIndex();
-            if(!initNumber.contains(Index)){
+            if (!initNumber.contains(Index)) {
                 initNumber.add(Index);
             }
         }
@@ -185,9 +181,21 @@ public class FoodService {
 
     // 이게 어차피 food 조회해 주는 거잖아 넹
 
-    public List<CommentResponseDto> getCommentByFood(Long foodId) {
+    private List<CommentResponseDto> getCommentByFood(Long foodId) {
         List<FoodComment> foodCommentList = queryFactory.selectFrom(foodComment).where(foodComment.food.id.eq(foodId)).orderBy(foodComment.id.desc()).fetch();
         return foodCommentList.stream().map(CommentResponseDto::new).toList();
+    }
+
+    public ResponseEntity<CommentListResponseDto> getCommentByFood(Long foodId, UserDetailsImpl userDetails) {
+        List<CommentResponseDto> foodCommentList = getCommentByFood(foodId);
+        CommentListResponseDto responseDto = new CommentListResponseDto();
+        responseDto.setData(foodCommentList);
+        if (userDetails != null) {
+            Long id = queryFactory.select(foodLike.accountInfo.id).from(foodLike).where(foodLike.accountInfo.id.eq(userDetails.getAccountInfo().getId())).fetchOne();
+            responseDto.setUserLike((id != null ? true : false));
+        } else
+            responseDto.setUserLike(false);
+        return ResponseEntity.ok(responseDto);
     }
 
     @Transactional
