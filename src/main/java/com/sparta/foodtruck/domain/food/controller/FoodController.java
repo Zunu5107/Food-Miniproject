@@ -30,18 +30,17 @@ public class FoodController {
 
     /**
      * @param requestDto {
-     *                   gender: true | false
-     *                   salty: true | false
-     *                   spicy: (0 - 4)
-     *                   world : (0 - 4)
-     *                   hot = true | false
+     *                      gender: true | false
+     *                      salty: true | false
+     *                      spicy: (0 - 4)
+     *                      world : (0 - 4)
+     *                      hot = true | false
      *                   }
      * @return foodList : [
      * {
      * id : Number
      * name: “foodName”,
      * ImageUrl : “url”
-     * comment : []
      * } ….
      * ]
      */
@@ -55,13 +54,9 @@ public class FoodController {
         return foodService.getRandomResult();
     }
 
-
-    @PutMapping("/{foodId}/choice")
-    public CustomStatusResponseDto choiceFood(@PathVariable Long foodId,
-                                              @RequestBody String foodName,
-                                              @RequestBody FoodRequestDto requestDto,
-                                              @RequestHeader UUID uuid) {
-        return foodService.choiceFood(foodId, foodName, requestDto, uuid);
+    @PatchMapping("/{foodId}/choice")
+    public CustomStatusResponseDto choiceFood(@PathVariable Long foodId) {
+        return foodService.choiceFood(foodId);
     }
 
     @GetMapping("/rank")
@@ -109,5 +104,13 @@ public class FoodController {
                                                                        @PathVariable Long commentId,
                                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return foodService.DeleteCommentByFood(foodId, commentId, userDetails);
+    }
+
+    @PostMapping("/{foodId}/comment/debugtwo")
+    public ResponseEntity<List<CommentResponseDto>> addCommentDebug(@PathVariable Long foodId,
+                                                                    @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                    @ModelAttribute CommentRequestDebugDto requestDto
+    ) {
+        return foodService.addCommentDebugTwo(foodId,userDetails, requestDto);
     }
 }
