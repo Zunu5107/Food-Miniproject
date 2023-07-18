@@ -21,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static com.sparta.foodtruck.global.custom.CustomStaticMethodClass.setFailResponse;
 import static com.sparta.foodtruck.global.jwt.JwtUtil.ACCESS_HEADER;
 
 @Slf4j(topic = "JWT 검증 및 인가")
@@ -40,6 +41,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         //String tokenValue = jwtUtil.getTokenFromRequest(req);
         log.info("Token Filter");
         String tokenValue = jwtUtil.getTokenFromRequestHeader(JwtUtil.ACCESS_HEADER, req);
+        String tokenValueRefresh = jwtUtil.getTokenFromRequestHeader(JwtUtil.AUTHORIZATION_HEADER, req);
 
         if (StringUtils.hasText(tokenValue)) {
             log.info("AccessToken");
@@ -53,7 +55,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     return;
                 }
             } catch (Exception e) {
-                exceptionHandler(res, e);
+                exceptionHandlerAccess(res, e);
                 return;
             }
 
@@ -67,16 +69,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        else {
-            GetRefreshToken(req, res);
+        else if (StringUtils.hasText(tokenValueRefresh)) {
+            GetRefreshToken(req, res, tokenValueRefresh);
+        } else{
+            res.addHeader("AccessTokenDenide","true");
         }
 
         filterChain.doFilter(req, res);
     }
 
-    private void GetRefreshToken(HttpServletRequest req, HttpServletResponse res) throws IOException{
-        String tokenValue = jwtUtil.getTokenFromRequestHeader(JwtUtil.AUTHORIZATION_HEADER, req);
-
+    private void GetRefreshToken(HttpServletRequest req, HttpServletResponse res, String tokenValue) throws IOException{
         if (StringUtils.hasText(tokenValue)) {
             log.info("RefreshToken");
             // JWT 토큰 substring
@@ -88,7 +90,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     return;
                 }
             } catch (Exception e) {
-                exceptionHandler(res, e);
+                exceptionHandlerRefresh(res, e);
                 return;
             }
 
@@ -137,7 +139,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     public void exceptionHandler(HttpServletResponse response, Exception exception) throws IOException {
         log.info("Exception Handler");
-        ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto("");
+        ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto();
         if (exception instanceof SecurityException || exception instanceof MalformedJwtException || exception instanceof SignatureException) {
             messageDto.setMessage("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } else if (exception instanceof ExpiredJwtException) {
@@ -150,13 +152,37 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         setFailResponse(response, messageDto);
     }
 
-    private void setFailResponse(HttpServletResponse response, ErrorLoginMessageDto errorLoginDto) throws IOException{
-        log.info("set Fail Response");
-        response.setStatus(401);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String str = objectMapper.writeValueAsString(errorLoginDto);
-        response.getWriter().write(str);
+    private void exceptionHandlerRefresh(HttpServletResponse response, Exception exception) throws IOException {
+        log.info("Exception Handler");
+        ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto();
+        if (exception instanceof SecurityException || exception instanceof MalformedJwtException || exception instanceof SignatureException) {
+            messageDto.setMessage("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+        } else if (exception instanceof ExpiredJwtException) {
+            messageDto.setMessage("Expired JWT token, 만료된 JWT token 입니다.");
+        } else if (exception instanceof UnsupportedJwtException) {
+            messageDto.setMessage("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+        } else if (exception instanceof IllegalArgumentException) {
+            messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        }
+        messageDto.setRefreshValidationError(true);
+        setFailResponse(response, messageDto);
     }
+
+    private void exceptionHandlerAccess(HttpServletResponse response, Exception exception) throws IOException {
+        log.info("Exception Handler Access");
+        ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto();
+        if (exception instanceof SecurityException || exception instanceof MalformedJwtException || exception instanceof SignatureException) {
+            messageDto.setMessage("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+        } else if (exception instanceof ExpiredJwtException) {
+            messageDto.setMessage("Expired JWT token, 만료된 JWT token 입니다.");
+        } else if (exception instanceof UnsupportedJwtException) {
+            messageDto.setMessage("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+        } else if (exception instanceof IllegalArgumentException) {
+            messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        }
+        messageDto.setAccessValidationError(true);
+        setFailResponse(response, messageDto);
+    }
+
+
 }

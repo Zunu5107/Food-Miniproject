@@ -24,6 +24,7 @@ import org.springframework.web.ErrorResponse;
 import java.io.IOException;
 import java.util.UUID;
 
+import static com.sparta.foodtruck.global.custom.CustomStaticMethodClass.setFailResponse;
 import static com.sparta.foodtruck.global.jwt.JwtUtil.*;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
@@ -88,7 +89,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("로그인 실패");
         // fail error
-        ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto("");
+        ErrorLoginMessageDto messageDto = new ErrorLoginMessageDto();
         if(failed instanceof UsernameNotFoundException){
             messageDto.setMessage("아이디가 일치하지 않습니다.");
         } else if (failed instanceof BadCredentialsException) {
@@ -97,12 +98,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         setFailResponse(response, messageDto);
     }
 
-    private void setFailResponse(HttpServletResponse response, ErrorLoginMessageDto errorLoginDto) throws IOException{
-        response.setStatus(401);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String str = objectMapper.writeValueAsString(errorLoginDto);
-        response.getWriter().write(str);
-    }
+
 }
