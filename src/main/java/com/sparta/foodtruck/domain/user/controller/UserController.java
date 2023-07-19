@@ -46,14 +46,14 @@ public class UserController {
         return userService.addressCheck(requestDto);
     }
 
-    @GetMapping("/test")
-    public Boolean addressCheck(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userDetails == null;
+    @GetMapping("/introduce")
+    public ResponseEntity<IntroduceResponseDto> introduce(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.introduce(userDetails);
     }
-
-    @GetMapping("/test2")
-    public Boolean addressCheck(){
-        return true;
+    @PostMapping("/introduce")
+    public ResponseEntity<CustomStatusResponseDto> introduceModified(@RequestBody IntroduceResponseDto responseDto,
+                                                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.introduceModified(responseDto, userDetails);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

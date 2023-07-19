@@ -16,10 +16,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info("가입되지 않은 사용자 접근");
-//        String temp = response.getHeader("AccessTokenDenide");
-//        if(temp != null)
-//            CustomStaticMethodClass.setFailResponse(response, new ErrorLoginMessageDto("RefreshToken Redirect", true));
-//        else
+        String temp = response.getHeader("AccessTokenDenide");
+        if(temp != null){
+            CustomStaticMethodClass.setFailResponse(response, new ErrorLoginMessageDto("RefreshToken Redirect", true, false));
+        }
+
         response.setStatus(401);
 //      response.sendRedirect("/login");
     }

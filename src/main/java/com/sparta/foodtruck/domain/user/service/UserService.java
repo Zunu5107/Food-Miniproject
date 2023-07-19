@@ -1,16 +1,17 @@
 package com.sparta.foodtruck.domain.user.service;
 
-import com.querydsl.core.QueryFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.foodtruck.domain.food.entity.Food;
 import com.sparta.foodtruck.domain.user.dto.AddressSameRequestDto;
+import com.sparta.foodtruck.domain.user.dto.IntroduceResponseDto;
 import com.sparta.foodtruck.domain.user.dto.SignupRequestDto;
-import com.sparta.foodtruck.domain.user.dto.UsernameResponseDto;
 import com.sparta.foodtruck.domain.user.dto.UsernameVaildRequestDto;
 import com.sparta.foodtruck.domain.user.entity.AccountInfo;
-import com.sparta.foodtruck.domain.user.entity.QUser;
+import com.sparta.foodtruck.domain.user.entity.QAccountInfo;
 import com.sparta.foodtruck.domain.user.entity.User;
 import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
 import com.sparta.foodtruck.domain.user.repository.UserRepository;
+import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import com.sparta.foodtruck.global.exception.CustomStatusException;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.sparta.foodtruck.domain.food.entity.QFoodLike.foodLike;
+import static com.sparta.foodtruck.domain.user.entity.QAccountInfo.accountInfo;
 import static com.sparta.foodtruck.domain.user.entity.QUser.user;
 
 @Service
@@ -60,7 +64,8 @@ public class UserService {
 
         return ResponseEntity.status(201).body(responseDto);
     }
-    public ResponseEntity<CustomStatusResponseDto> usernameCheck(UsernameVaildRequestDto requestDto){
+
+    public ResponseEntity<CustomStatusResponseDto> usernameCheck(UsernameVaildRequestDto requestDto) {
         Optional<AccountInfo> checkUsername = accountInfoRepository.findByUsername(requestDto.getUsername());
 
         if (checkUsername.isPresent()) {
@@ -77,6 +82,23 @@ public class UserService {
             throw CustomStatusException.builder("Same Id").status(409).build();
         }
 
+        return ResponseEntity.ok(new CustomStatusResponseDto(true));
+    }
+
+    public ResponseEntity<IntroduceResponseDto> introduce(UserDetailsImpl userDetails) {
+        if (userDetails == null)
+            throw CustomStatusException.builder("접속 되지 않은 유저입니다.").status(401).build();
+
+        List<Food> likeList = queryFactory.select(foodLike.food).from(foodLike).where(foodLike.accountInfo.id.eq(userDetails.getUser().getId())).fetch();
+        return ResponseEntity.ok(new IntroduceResponseDto(userDetails.getUsername(), userDetails.getAccountInfo().getUsername(), userDetails.getAccountInfo().getIntroduce(), likeList));
+    }
+
+    @Transactional
+    public ResponseEntity<CustomStatusResponseDto> introduceModified(IntroduceResponseDto responseDto, UserDetailsImpl userDetails) {
+        if (userDetails == null)
+            throw CustomStatusException.builder("접속 되지 않은 유저입니다.").status(401).build();
+
+        queryFactory.update(accountInfo).set(accountInfo.introduce, responseDto.getIntroduce()).where(accountInfo.id.eq(userDetails.getAccountInfo().getId())).execute();
         return ResponseEntity.ok(new CustomStatusResponseDto(true));
     }
 }

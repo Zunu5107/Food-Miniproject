@@ -3,6 +3,7 @@ package com.sparta.foodtruck.global.jwt;
 
 import com.sparta.foodtruck.domain.user.entity.UserRoleEnum;
 import com.sparta.foodtruck.global.util.AESUtil;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -171,7 +172,7 @@ public class JwtUtil {
     }
 
     public String getTokenFromRequestHeader(String headerName, HttpServletRequest req) {
-        // 헤더 확인하기
+//         헤더 확인하기
 //        Enumeration em = req.getHeaderNames();
 //        while(em.hasMoreElements()) {
 //            String name = (String)em.nextElement();

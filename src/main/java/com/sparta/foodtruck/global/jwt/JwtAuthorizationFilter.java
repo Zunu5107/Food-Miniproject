@@ -46,12 +46,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenValue)) {
             log.info("AccessToken");
             // JWT 토큰 substring
-            tokenValue = jwtUtil.substringToken(tokenValue);
-            log.info(tokenValue);
-
             try {
+                tokenValue = jwtUtil.substringToken(tokenValue);
+                log.info(tokenValue);
+
                 if (!jwtUtil.validateToken(tokenValue)) {
-                    log.error("Token Error");
+                    log.error("AccessToken Error");
                     return;
                 }
             } catch (Exception e) {
@@ -70,8 +70,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
         }
         else if (StringUtils.hasText(tokenValueRefresh)) {
+            log.info("RefreshToken");
             GetRefreshToken(req, res, tokenValueRefresh);
         } else{
+            log.info("AccessTokenDenide");
             res.addHeader("AccessTokenDenide","true");
         }
 
@@ -80,13 +82,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private void GetRefreshToken(HttpServletRequest req, HttpServletResponse res, String tokenValue) throws IOException{
         if (StringUtils.hasText(tokenValue)) {
-            log.info("RefreshToken");
             // JWT 토큰 substring
-            tokenValue = jwtUtil.substringToken(tokenValue);
-            log.info(tokenValue);
             try {
+                tokenValue = jwtUtil.substringToken(tokenValue);
+                log.info(tokenValue);
+
                 if (!jwtUtil.validateToken(tokenValue)) {
-                    log.error("Token Error");
+                    log.error("RefreshToken Error");
                     return;
                 }
             } catch (Exception e) {
@@ -94,6 +96,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            log.info("Vaildate Correct");
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
             String subject = info.getSubject();
             String uuid = userDetailsService.decryptAES(subject);
@@ -148,6 +151,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             messageDto.setMessage("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } else if (exception instanceof IllegalArgumentException) {
             messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        } else if (exception instanceof NullPointerException) {
+            messageDto.setMessage("Not Found JWT.");
         }
         setFailResponse(response, messageDto);
     }
@@ -163,6 +168,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             messageDto.setMessage("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } else if (exception instanceof IllegalArgumentException) {
             messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        } else if (exception instanceof NullPointerException) {
+            messageDto.setMessage("Not Found JWT.");
         }
         messageDto.setRefreshValidationError(true);
         setFailResponse(response, messageDto);

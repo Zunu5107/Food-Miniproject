@@ -191,7 +191,7 @@ public class FoodService {
         CommentListResponseDto responseDto = new CommentListResponseDto();
         responseDto.setData(foodCommentList);
         if (userDetails != null) {
-            Long id = queryFactory.select(foodLike.accountInfo.id).from(foodLike).where(foodLike.accountInfo.id.eq(userDetails.getAccountInfo().getId())).fetchOne();
+            Long id = queryFactory.select(foodLike.accountInfo.id).from(foodLike).where(foodLike.food.id.eq(foodId),foodLike.accountInfo.id.eq(userDetails.getAccountInfo().getId())).fetchOne();
             responseDto.setUserLike((id != null ? true : false));
         } else
             responseDto.setUserLike(false);
