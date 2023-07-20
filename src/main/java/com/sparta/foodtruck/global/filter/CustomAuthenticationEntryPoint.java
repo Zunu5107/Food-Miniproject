@@ -18,7 +18,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.info("가입되지 않은 사용자 접근");
         String temp = response.getHeader("AccessTokenDenide");
         if(temp != null){
+            log.info("AccessTokenDenide");
             CustomStaticMethodClass.setFailResponse(response, new ErrorLoginMessageDto("RefreshToken Redirect", true, false));
+        }
+        else{
+            log.info("Not AccessTokenDenide");
         }
 
         response.setStatus(401);

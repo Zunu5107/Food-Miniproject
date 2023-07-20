@@ -1,22 +1,17 @@
 package com.sparta.foodtruck.domain.user.sercurity;
 
 
-import com.sparta.foodtruck.domain.user.dto.LoginRequestDto;
 import com.sparta.foodtruck.domain.user.entity.AccountInfo;
 import com.sparta.foodtruck.domain.user.entity.User;
 import com.sparta.foodtruck.domain.user.repository.AccountInfoRepository;
 import com.sparta.foodtruck.domain.user.repository.UserRepository;
-import com.sparta.foodtruck.global.dto.ErrorLoginDto;
 import com.sparta.foodtruck.global.redis.RedisService;
 import com.sparta.foodtruck.global.util.AESUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

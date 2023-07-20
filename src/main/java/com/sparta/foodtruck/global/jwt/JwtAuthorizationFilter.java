@@ -1,7 +1,6 @@
 package com.sparta.foodtruck.global.jwt;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsServiceImpl;
 import com.sparta.foodtruck.global.dto.ErrorLoginMessageDto;
@@ -11,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -27,12 +27,15 @@ import static com.sparta.foodtruck.global.jwt.JwtUtil.ACCESS_HEADER;
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    @Value("${custom.option.debug}")
+    private Boolean Debug;
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
 
     public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        log.info("Debug value = " + Debug);
     }
 
     @Override
@@ -71,13 +74,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
         else if (StringUtils.hasText(tokenValueRefresh)) {
             log.info("RefreshToken");
-            GetRefreshToken(req, res, tokenValueRefresh);
+            try {
+                GetRefreshToken(req, res, tokenValueRefresh);
+            } catch (Exception e) {
+                exceptionHandlerRefresh(res, e);
+                return;
+            }
         } else{
             log.info("AccessTokenDenide");
             res.addHeader("AccessTokenDenide","true");
         }
-
         filterChain.doFilter(req, res);
+
     }
 
     private void GetRefreshToken(HttpServletRequest req, HttpServletResponse res, String tokenValue) throws IOException{
@@ -101,12 +109,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String subject = info.getSubject();
             String uuid = userDetailsService.decryptAES(subject);
             String username = userDetailsService.loadUsernameByRedis(uuid);
-            try {
+            if(username == null)
+                exceptionHandler(res, new NullPointerException());
                 setAuthenticationRefresh(res, username);
-            } catch (Exception e) {
-                exceptionHandler(res, e);
-                return;
-            }
+
         }
     }
 
@@ -153,7 +159,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         } else if (exception instanceof NullPointerException) {
             messageDto.setMessage("Not Found JWT.");
-        }
+        } else if (Debug)
+            messageDto.setMessage(exception.getClass().getCanonicalName()); // Debug
         setFailResponse(response, messageDto);
     }
 
@@ -170,7 +177,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         } else if (exception instanceof NullPointerException) {
             messageDto.setMessage("Not Found JWT.");
-        }
+        }else if (Debug)
+            messageDto.setMessage(exception.getClass().getCanonicalName()); // Debug
         messageDto.setRefreshValidationError(true);
         setFailResponse(response, messageDto);
     }
@@ -186,7 +194,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             messageDto.setMessage("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } else if (exception instanceof IllegalArgumentException) {
             messageDto.setMessage("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-        }
+        } else if (Debug)
+            messageDto.setMessage(exception.getClass().getCanonicalName()); // Debug
         messageDto.setAccessValidationError(true);
         setFailResponse(response, messageDto);
     }

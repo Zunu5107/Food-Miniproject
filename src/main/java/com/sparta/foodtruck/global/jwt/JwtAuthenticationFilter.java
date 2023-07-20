@@ -2,11 +2,10 @@ package com.sparta.foodtruck.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.foodtruck.domain.user.dto.LoginRequestDto;
-import com.sparta.foodtruck.domain.user.dto.UsernameVaildRequestDto;
+import com.sparta.foodtruck.domain.user.dto.UsernameResponseDto;
 import com.sparta.foodtruck.domain.user.entity.UserRoleEnum;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsServiceImpl;
-import com.sparta.foodtruck.global.dto.ErrorLoginDto;
 import com.sparta.foodtruck.global.dto.ErrorLoginMessageDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,13 +18,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.ErrorResponse;
 
 import java.io.IOException;
 import java.util.UUID;
 
 import static com.sparta.foodtruck.global.custom.CustomStaticMethodClass.setFailResponse;
-import static com.sparta.foodtruck.global.jwt.JwtUtil.*;
+import static com.sparta.foodtruck.global.jwt.JwtUtil.ACCESS_HEADER;
+import static com.sparta.foodtruck.global.jwt.JwtUtil.AUTHORIZATION_HEADER;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -72,7 +71,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         ObjectMapper objectMapper = new ObjectMapper();
-        String str = objectMapper.writeValueAsString(new UsernameVaildRequestDto(username));
+        String str = objectMapper.writeValueAsString(new UsernameResponseDto(username));
         response.getWriter().write(str);
     }
 

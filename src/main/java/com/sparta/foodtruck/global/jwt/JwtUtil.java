@@ -2,8 +2,6 @@ package com.sparta.foodtruck.global.jwt;
 
 
 import com.sparta.foodtruck.domain.user.entity.UserRoleEnum;
-import com.sparta.foodtruck.global.util.AESUtil;
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -22,7 +20,6 @@ import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Enumeration;
 
 @Component
 public class JwtUtil {
