@@ -1,5 +1,6 @@
 package com.sparta.foodtruck.domain.user.controller;
 
+import com.sparta.foodtruck.domain.accountinfo.dto.IntroduceResponseDto;
 import com.sparta.foodtruck.domain.user.dto.*;
 import com.sparta.foodtruck.domain.user.exception.CustomSameUsernameException;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
@@ -46,21 +47,13 @@ public class UserController {
         return userService.addressCheck(requestDto);
     }
 
-    @GetMapping("/introduce")
-    public ResponseEntity<IntroduceResponseDto> introduce(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.introduce(userDetails);
-    }
-    @PostMapping("/introduce")
-    public ResponseEntity<CustomStatusResponseDto> introduceModified(@RequestBody IntroduceResponseDto responseDto,
-                                                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.introduceModified(responseDto, userDetails);
-    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomStatusAndMessageResponseDto> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
         CustomStatusAndMessageResponseDto responseDto = new CustomStatusAndMessageResponseDto(false);
         exception.getBindingResult().getFieldErrors().forEach(e -> responseDto.addMessage(e.getField(), e.getDefaultMessage()));
-        return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(responseDto);
+        return ResponseEntity.status(HttpStatusCode.valueOf(406)).body(responseDto);
     }
 
     @ExceptionHandler(CustomSameUsernameException.class)

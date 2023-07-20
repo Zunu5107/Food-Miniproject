@@ -17,6 +17,8 @@ public class AccountInfo {
 
     private String introduce;
 
+    private String profileImage;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
@@ -25,6 +27,15 @@ public class AccountInfo {
         this.id = id;
         this.username = username;
         this.introduce = null;
+        this.profileImage = null;
         this.role = UserRoleEnum.USER;
+    }
+
+    public void modifiedIntroduce(String introduce){
+        this.introduce = introduce;
+    }
+
+    public void modifiedProfileImage(String profileImage){
+        this.profileImage = profileImage;
     }
 }

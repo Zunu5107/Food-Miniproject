@@ -1,8 +1,6 @@
 package com.sparta.foodtruck.domain.food.dto;
 
 import com.sparta.foodtruck.domain.food.entity.FoodComment;
-import com.sparta.foodtruck.domain.user.dto.LoginRequestDto;
-import com.sparta.foodtruck.domain.user.dto.PasswordRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

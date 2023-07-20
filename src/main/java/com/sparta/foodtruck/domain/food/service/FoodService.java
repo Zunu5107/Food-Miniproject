@@ -2,7 +2,10 @@ package com.sparta.foodtruck.domain.food.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.foodtruck.domain.food.dto.*;
-import com.sparta.foodtruck.domain.food.entity.*;
+import com.sparta.foodtruck.domain.food.entity.Food;
+import com.sparta.foodtruck.domain.food.entity.FoodComment;
+import com.sparta.foodtruck.domain.food.entity.FoodLike;
+import com.sparta.foodtruck.domain.food.entity.FoodValue;
 import com.sparta.foodtruck.domain.food.repository.FoodCommentRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodLikeRepository;
 import com.sparta.foodtruck.domain.food.repository.FoodRepository;

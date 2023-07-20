@@ -5,15 +5,12 @@ import com.sparta.foodtruck.domain.food.service.FoodService;
 import com.sparta.foodtruck.domain.user.sercurity.UserDetailsImpl;
 import com.sparta.foodtruck.global.dto.CustomStatusResponseDto;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
